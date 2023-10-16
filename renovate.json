@@ -22,5 +22,6 @@
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.*)$"
     }
-  ]
+  ],
+  "schedule": [ "at any time" ]
 }

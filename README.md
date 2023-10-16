@@ -1,27 +1,43 @@
-# General Go template repository
+# PR-comment-filter
 
-This is a general template repository containing some basic files every GitHub repo owned by Giant Swarm should have.
+Designed to be an entrypoint task for GitHub webhook triggers based on PR comments. `pr-comment-filter` will check the comment text for recognised triggers (e.g. `/run my-pipeline`) and generate individual `PipelineRun` resources for each.
 
-Note also these more specific repositories:
+The generated `PipelineRun` will have details about the PR passed through as params as well as any arguments added to the trigger comment.
 
-- [template-app](https://github.com/giantswarm/template-app)
-- [gitops-template](https://github.com/giantswarm/gitops-template)
-- [python-app-template](https://github.com/giantswarm/python-app-template)
+Details about files updated in the PR will also be included as parameters on the `PipelineRun` with the following params being defined with a comma separated string value:
 
-## Creating a new repository
+* `PR_FILES` - Includes all files contained in the PR
+* `PR_FILES_ADDED` - Includes all new files
+* `PR_FILES_CHANGED` - Includes all modified/changed/renamed files
+* `PR_FILES_REMOVED` - Includes all files removed in the PR
 
-Please do not use the `Use this template` function in the GitHub web UI.
+## Trigger format
 
-Check out the according [handbook article](https://handbook.giantswarm.io/docs/dev-and-releng/repository/go/) for better instructions.
+All triggers must follow the following format:
 
-### Some suggestions for your README
+```
+/run ${PIPELINE_NAME} [KEY=val ...]
+```
 
-After you have created your new repository, you may want to add some of these badges to the top of your README.
+Examples:
 
-- **CircleCI:** After enabling builds for this repo via [this link](https://circleci.com/setup-project/gh/giantswarm/pr-comment-filter), you can find badge code on [this page](https://app.circleci.com/settings/project/github/giantswarm/pr-comment-filter/status-badges).
+```
+/run build-and-publish
+/run test-cluster-create PRIVATE_NETWORK=true
+/run test-cluster-create PREVIOUS_VERSION=1.2.6
+/run test-cluster-upgrade PRIVATE_NETWORK=false PREVIOUS_VERSION=1.2.6
+/run hold wait-for-tests
+/run help NAMESPACE=foo-bar test-cluster-create
+```
 
-- **Go reference:** use [this helper](https://pkg.go.dev/badge/) to create the markdown code.
+Some notes:
 
-- **Go report card:** enter the module name on the [front page](https://goreportcard.com/) and hit "Generate report". Then use this markdown code for your badge: `[![Go report card](https://goreportcard.com/badge/github.com/giantswarm/pr-comment-filter)](https://goreportcard.com/report/github.com/giantswarm/pr-comment-filter)`
-
-- **Sourcegraph "used by N projects" badge**: for public Go repos only: `[![Sourcegraph](https://sourcegraph.com/github.com/giantswarm/pr-comment-filter/-/badge.svg)](https://sourcegraph.com/github.com/giantswarm/pr-comment-filter)`
+* Multiple triggers can be defined in a single comment but must each be on their own line
+* Triggers must start the line with `/run ` and cannot be placed mid-sentance
+* Arguments are optional and in the format of either:
+  * `KEY=value` where the key must be all uppercase and is used as the key/val pair of environment variables
+  * space seperated words - these are treated as "positional arguments" and added as the `POS_ARGS` env var with the values comma seperated
+* Multiple arguments can be provided as long as they all appear on the same line as the trigger
+* Argument values with spaces in them is not currently supported
+* A Pipeline from a specific namespace can be run by specifying a `NAMESPACE=xxx` argument along with the `/run` trigger line
+* If a user provided namespace isn't provided the pipeline will first be looked for in a namespace matching the repo name and if not found then default back to the `tekton-pipelines` namespace.
