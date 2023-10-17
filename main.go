@@ -399,10 +399,6 @@ func getServiceAccount(ctx context.Context, serviceAccountName string, namespace
 	return serviceAccount, err
 }
 
-func stringToPtr(s string) *string {
-	return &s
-}
-
 func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool {
 	if strings.ToLower(userType) == "user" && userLogin != "" {
 		oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
