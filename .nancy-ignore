@@ -1,9 +1,9 @@
 # pkg:golang/github.com/cloudflare/circl@v1.1.0
-# CWE-755: Improper Handling of Exceptional Conditions                                                                                                                                                  ┃
+# CWE-755: Improper Handling of Exceptional Conditions
 CVE-2023-1732 until=2023-12-12
 
 # pkg:golang/github.com/tektoncd/pipeline@v0.50.1
-# [CVE-2023-37264] CWE-345: Insufficient Verification of Data Authenticity                                                                                                                                                ┃
+# [CVE-2023-37264] CWE-345: Insufficient Verification of Data Authenticity
 CVE-2023-37264 until=2023-12-12
 
 # pkg:golang/golang.org/x/net@v0.16.0
