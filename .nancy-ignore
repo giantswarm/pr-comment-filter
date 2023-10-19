@@ -1,3 +1,11 @@
-# Affects all versions of archiver which is required by vault.
-# Taken from: https://github.com/giantswarm/opsctl/pull/1072/files#diff-bbe4a7fb12c43622bce7c6840c770e9995be614626a219942ca138403629cb69R1
-CVE-2019-10743 until=2021-10-17
+# pkg:golang/github.com/cloudflare/circl@v1.1.0
+# CWE-755: Improper Handling of Exceptional Conditions                                                                                                                                                  ┃
+CVE-2023-1732 until=2023-12-12
+
+# pkg:golang/github.com/tektoncd/pipeline@v0.50.1
+# [CVE-2023-37264] CWE-345: Insufficient Verification of Data Authenticity                                                                                                                                                ┃
+CVE-2023-37264 until=2023-12-12
+
+# pkg:golang/golang.org/x/net@v0.16.0
+# [CVE-2023-39325] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')    
+CVE-2023-39325 until=2023-12-12
