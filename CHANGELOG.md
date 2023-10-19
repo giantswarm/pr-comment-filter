@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2023-10-18
 
-## [0.0.1] - 2023-10-17
-
-
 
 [Unreleased]: https://github.com/giantswarm/pr-comment-filter/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/giantswarm/pr-comment-filter/compare/v0.0.1...v0.0.1
 [0.0.1]: https://github.com/giantswarm/pr-comment-filter/releases/tag/v0.0.1
