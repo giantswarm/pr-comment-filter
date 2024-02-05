@@ -240,6 +240,14 @@ func main() {
 				TaskRunTemplate: tkn.PipelineTaskRunTemplate{
 					ServiceAccountName: serviceAccountName,
 					PodTemplate: &pod.Template{
+						SecurityContext: &corev1.PodSecurityContext{
+							RunAsGroup:   toPtr(int64(1000)),
+							RunAsNonRoot: toPtr(true),
+							RunAsUser:    toPtr(int64(1000)),
+							SeccompProfile: &corev1.SeccompProfile{
+								Type: corev1.SeccompProfileTypeRuntimeDefault,
+							},
+						},
 						ImagePullSecrets: []corev1.LocalObjectReference{
 							{
 								Name: "quay-imagepull-secret",
@@ -427,4 +435,8 @@ func getAnnotationOrDefault(annotations map[string]string, targetKey string, def
 		return val
 	}
 	return defaultValue
+}
+
+func toPtr[T any](v T) *T {
+	return &v
 }
