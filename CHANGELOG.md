@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated Tekton Pipelines to latest release
+- Updated the base Dockerfile to Go v1.22
 
 ## [0.3.0] - 2024-02-05
 
