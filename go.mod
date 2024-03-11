@@ -8,9 +8,9 @@ require (
 	github.com/google/go-github/v59 v59.0.0
 	github.com/tektoncd/pipeline v0.57.0
 	golang.org/x/oauth2 v0.18.0
-	k8s.io/api v0.27.1
+	k8s.io/api v0.28.1
 	k8s.io/apimachinery v0.29.0
-	k8s.io/client-go v0.27.1
+	k8s.io/client-go v0.28.1
 )
 
 require (
@@ -34,7 +34,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/cel-go v0.20.0 // indirect
-	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-containerregistry v0.19.0 // indirect
