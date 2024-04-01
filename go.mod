@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.22.1
 
 require (
-	github.com/google/go-github/v59 v59.0.0
+	github.com/google/go-github/v61 v61.0.0
 	github.com/tektoncd/pipeline v0.58.0
 	golang.org/x/oauth2 v0.18.0
 	k8s.io/api v0.28.1
