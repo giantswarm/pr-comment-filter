@@ -39,7 +39,7 @@ var (
 	// /run test-cluster-upgrade PRIVATE_NETWORK=false PREVIOUS_VERSION=1.2.6
 	// /run hold wait-for-tests
 	// /run help NAMESPACE=foo-bar test-cluster-create
-	triggerFormat = regexp.MustCompile(`(?mi)^\/run (?P<pipeline>\S+)(?: (?P<args>(?:[A-Z_]+=\S+ ?)*)| (?P<pos>(?:[A-Za-z0-9\-_]+ ?)*))*(?:\r|\n|$)`)
+	triggerFormat = regexp.MustCompile(`(?mi)^\s*\/run (?P<pipeline>\S+)(?: (?P<args>(?:[A-Z_]+=\S+ ?)*)| (?P<pos>(?:[A-Za-z0-9\-_]+ ?)*))*(?:\r|\n|$)`)
 
 	tektonClient *tknclient.Clientset
 	kubeClient   kubernetes.Interface
