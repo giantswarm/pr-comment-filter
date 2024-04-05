@@ -252,6 +252,9 @@ func main() {
 							{
 								Name: "quay-imagepull-secret",
 							},
+							{
+								Name: "gsociprivate-pull-secret",
+							},
 						},
 					},
 				},
