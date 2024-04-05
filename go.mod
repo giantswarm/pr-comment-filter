@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/google/go-github/v61 v61.0.0
 	github.com/tektoncd/pipeline v0.58.0
-	golang.org/x/oauth2 v0.18.0
+	golang.org/x/oauth2 v0.19.0
 	k8s.io/api v0.28.1
 	k8s.io/apimachinery v0.29.0
 	k8s.io/client-go v0.28.1
@@ -73,7 +73,6 @@ require (
 	golang.org/x/time v0.5.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.167.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240205150955-31a09d347014 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240213162025-012b6fc9bca9 // indirect
 	google.golang.org/grpc v1.62.1 // indirect
