@@ -5,3 +5,7 @@ CVE-2023-37264 until=2024-04-30
 # pkg:golang/google.golang.org/protobuf@v1.31.0
 # [CVE-2024-24786] CWE-835: Loop with Unreachable Exit Condition ('Infinite Loop')
 CVE-2024-24786
+
+# github.com/tektoncd/pipeline@v0.58.0
+# [CVE-2023-37264] CWE-345: Insufficient Verification of Data Authenticity
+CVE-2023-37264
