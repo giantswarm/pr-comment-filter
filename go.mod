@@ -7,7 +7,7 @@ toolchain go1.22.4
 require (
 	github.com/google/go-github/v62 v62.0.0
 	github.com/tektoncd/pipeline v0.58.0
-	golang.org/x/oauth2 v0.19.0
+	golang.org/x/oauth2 v0.21.0
 	k8s.io/api v0.28.1
 	k8s.io/apimachinery v0.29.0
 	k8s.io/client-go v0.28.1
