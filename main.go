@@ -267,7 +267,7 @@ func main() {
 								AccessModes: []corev1.PersistentVolumeAccessMode{
 									workspaceStorageClassAccessMode,
 								},
-								Resources: corev1.ResourceRequirements{
+								Resources: corev1.VolumeResourceRequirements{
 									Requests: corev1.ResourceList{
 										corev1.ResourceStorage: resource.MustParse("5Gi"),
 									},
