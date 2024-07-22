@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Handle draft PRs and if triggered from opening add a comment stating that the trigger was ignored
+
 ## [0.6.0] - 2024-07-18
 
 ## [0.5.0] - 2024-04-05
