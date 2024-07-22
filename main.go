@@ -141,40 +141,25 @@ func main() {
 
 	triggerMatches := triggerFormat.FindAllStringSubmatch(os.Getenv("COMMENT"), -1)
 
+	oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+	))
+	ghClient := github.NewClient(oClient)
+	prNumber, err := strconv.Atoi(env["NUMBER"])
+	if err != nil {
+		panic("Failed to parse PR number to int")
+	}
+
+	pr, _, err := ghClient.PullRequests.Get(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber)
+	if err != nil {
+		fmt.Println("Failed to get PR details from GitHub API", err)
+		os.Exit(1)
+	}
+
 	// For comments on PRs we don't get all the details of the PR so may need to fetch those from the API
 	if len(triggerMatches) > 0 && env["GIT_REVISION"] == "" {
-		oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-		))
-		ghClient := github.NewClient(oClient)
-		prNumber, err := strconv.Atoi(env["NUMBER"])
-		if err != nil {
-			panic("Failed to parse PR number to int")
-		}
-
 		// Get pull request HEAD commit
-		pr, _, err := ghClient.PullRequests.Get(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber)
-		if err != nil {
-			fmt.Println("Failed to get PR details from GitHub API", err)
-			os.Exit(1)
-		}
 		env["GIT_REVISION"] = *pr.Head.SHA
-
-		// If PR is draft and triggered from the PR body don't run trigger and instead
-		// inform the user to add a comment
-		if *pr.Draft && env["COMMENT_ID"] == "" {
-			fmt.Println("PR is draft and was triggered from the opening comment, not triggering")
-
-			// TODO: Comment
-			_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.IssueComment{
-				Body: github.String("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
-			})
-			if err != nil {
-				fmt.Println("Failed to add PR comment", err)
-				os.Exit(1)
-			}
-			os.Exit(0)
-		}
 
 		// Get changed files
 		// TODO: Currently doesn't handle paging so limited to first 100 files but I'd like to refactor more before we introducing paging support
@@ -195,6 +180,21 @@ func main() {
 				// Nothing to do here. This includes the `copied` and `unchanged` statuses.
 			}
 		}
+	}
+
+	// If PR is draft and triggered from the PR body don't run trigger and instead
+	// inform the user to add a comment
+	if *pr.Draft && env["COMMENT_ID"] == "" {
+		fmt.Println("PR is draft and was triggered from the opening comment, not triggering")
+
+		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.IssueComment{
+			Body: github.String("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
+		})
+		if err != nil {
+			fmt.Println("Failed to add PR comment", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
 	}
 
 	for _, match := range triggerMatches {
