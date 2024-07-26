@@ -6,7 +6,7 @@ toolchain go1.22.5
 
 require (
 	github.com/google/go-github/v63 v63.0.0
-	github.com/tektoncd/pipeline v0.61.1
+	github.com/tektoncd/pipeline v0.62.0
 	golang.org/x/oauth2 v0.21.0
 	k8s.io/api v0.30.3
 	k8s.io/apimachinery v0.30.3
@@ -26,7 +26,7 @@ require (
 	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
-	github.com/go-logr/logr v1.4.1 // indirect
+	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
