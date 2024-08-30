@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add the GitHub username as a label on the PipelineRun
+-
 ## [0.7.1] - 2024-07-22
 
 ### Fixed
