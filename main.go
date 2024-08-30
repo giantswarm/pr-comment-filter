@@ -237,9 +237,10 @@ func main() {
 				GenerateName: fmt.Sprintf("pr-%s-%s-%s", env["REPO_NAME"], env["NUMBER"], trigger.PipelineName),
 				Namespace:    namespace,
 				Labels: map[string]string{
-					"cicd.giantswarm.io/repo":     env["REPO_NAME"],
-					"cicd.giantswarm.io/pr":       env["NUMBER"],
-					"cicd.giantswarm.io/revision": env["GIT_REVISION"],
+					"cicd.giantswarm.io/repo":         env["REPO_NAME"],
+					"cicd.giantswarm.io/pr":           env["NUMBER"],
+					"cicd.giantswarm.io/revision":     env["GIT_REVISION"],
+					"cicd.giantswarm.io/triggered-by": env["USER_LOGIN"],
 				},
 				Annotations: map[string]string{
 					"cicd.giantswarm.io/url": env["URL"],
