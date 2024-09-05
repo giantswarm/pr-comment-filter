@@ -232,6 +232,10 @@ func main() {
 		}
 		fmt.Printf("Setting workspace storage class to: %s\n", workspaceStorageClass)
 
+		userLogin := env["USER_LOGIN"]
+		// Remove the `[bot]` suffix from the username as the `[]` aren't valid label chars
+		userLogin = strings.TrimSuffix(userLogin, "[bot]")
+
 		pipelineRun := &tkn.PipelineRun{
 			ObjectMeta: v1.ObjectMeta{
 				GenerateName: fmt.Sprintf("pr-%s-%s-%s", env["REPO_NAME"], env["NUMBER"], trigger.PipelineName),
@@ -240,7 +244,7 @@ func main() {
 					"cicd.giantswarm.io/repo":         env["REPO_NAME"],
 					"cicd.giantswarm.io/pr":           env["NUMBER"],
 					"cicd.giantswarm.io/revision":     env["GIT_REVISION"],
-					"cicd.giantswarm.io/triggered-by": env["USER_LOGIN"],
+					"cicd.giantswarm.io/triggered-by": userLogin,
 				},
 				Annotations: map[string]string{
 					"cicd.giantswarm.io/url": env["URL"],
