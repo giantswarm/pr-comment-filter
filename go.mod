@@ -1,16 +1,14 @@
 module pr-comment-filter
 
-go 1.22.0
-
-toolchain go1.22.6
+go 1.23.1
 
 require (
 	github.com/google/go-github/v65 v65.0.0
 	github.com/tektoncd/pipeline v0.63.0
 	golang.org/x/oauth2 v0.23.0
-	k8s.io/api v0.31.0
-	k8s.io/apimachinery v0.31.0
-	k8s.io/client-go v0.31.0
+	k8s.io/api v0.31.1
+	k8s.io/apimachinery v0.31.1
+	k8s.io/client-go v0.31.1
 )
 
 require (
