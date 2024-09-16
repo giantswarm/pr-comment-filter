@@ -2,7 +2,7 @@ module pr-comment-filter
 
 go 1.22.0
 
-toolchain go1.22.6
+toolchain go1.23.1
 
 require (
 	github.com/google/go-github/v65 v65.0.0
