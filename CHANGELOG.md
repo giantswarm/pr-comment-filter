@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2024-09-16
+
 ### Changed
 
 - Upgraded Go to v1.23.1
@@ -70,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2023-10-18
 
 
-[Unreleased]: https://github.com/giantswarm/pr-comment-filter/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/giantswarm/pr-comment-filter/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/giantswarm/pr-comment-filter/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/giantswarm/pr-comment-filter/compare/v0.7.0...v0.7.1
