@@ -401,6 +401,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 		if pipeline != nil {
 			return pipeline, userProvidedNamespace, nil
 		} else if errors.IsNotFound(err) {
+			//lint:ignore ST1005 Pipeline is a CRD's name here.
 			return nil, "", fmt.Errorf("Pipeline not found in user provided namespace")
 		}
 	}
@@ -421,6 +422,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 		}
 	}
 
+	//lint:ignore ST1005 Pipeline is a CRD's name here.
 	return nil, "", fmt.Errorf("Pipeline with name '%s' not found", pipelineName)
 }
 
