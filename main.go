@@ -162,22 +162,26 @@ func main() {
 		env["GIT_REVISION"] = *pr.Head.SHA
 
 		// Get changed files
-		// TODO: Currently doesn't handle paging so limited to first 100 files but I'd like to refactor more before we introducing paging support
-		files, _, err := ghClient.PullRequests.ListFiles(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.ListOptions{PerPage: 100})
-		if err != nil {
-			fmt.Println("Failed to get changed files in PR from GitHub API", err)
-			os.Exit(1)
-		}
-		for _, file := range files {
-			switch *file.Status {
-			case "added":
-				changedFiles.Added = append(changedFiles.Added, *file.Filename)
-			case "removed":
-				changedFiles.Removed = append(changedFiles.Removed, *file.Filename)
-			case "modified", "renamed", "changed":
-				changedFiles.Changed = append(changedFiles.Changed, *file.Filename)
-			default:
-				// Nothing to do here. This includes the `copied` and `unchanged` statuses.
+		for page := 1; ; page++ {
+			files, _, err := ghClient.PullRequests.ListFiles(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.ListOptions{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println("Failed to get changed files in PR from GitHub API", err)
+				os.Exit(1)
+			}
+			if len(files) == 0 {
+				break
+			}
+			for _, file := range files {
+				switch *file.Status {
+				case "added":
+					changedFiles.Added = append(changedFiles.Added, *file.Filename)
+				case "removed":
+					changedFiles.Removed = append(changedFiles.Removed, *file.Filename)
+				case "modified", "renamed", "changed":
+					changedFiles.Changed = append(changedFiles.Changed, *file.Filename)
+				default:
+					// Nothing to do here. This includes the `copied` and `unchanged` statuses.
+				}
 			}
 		}
 	}
