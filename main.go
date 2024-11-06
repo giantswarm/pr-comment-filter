@@ -417,7 +417,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 			continue
 		} else if err == nil {
 			return pipeline, namespace, nil
-		} else if err != nil {
+		} else {
 			return nil, "", err
 		}
 	}
