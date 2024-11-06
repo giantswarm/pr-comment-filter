@@ -4,24 +4,27 @@ orbs:
   architect: giantswarm/architect@5.11.1
 
 workflows:
-  test:
+  build:
     jobs:
       - architect/go-test:
           name: go-test
           filters:
-            # Trigger job also on git tag.
-            tags:
-              only: /^v.*/
-
-      - architect/push-to-registries:
-          context: architect
-          name: push-to-registries
-          requires:
-            - go-test
-          filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore:
                 - main
                 - master
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-registries:
+          name: push-to-registries
+          context: architect
+          requires:
+            - go-test
+          filters:
+            branches:
+              ignore:
+                - main
+                - master
+            tags:
+              only: /^v.*/
