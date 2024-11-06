@@ -1,6 +1,6 @@
 module pr-comment-filter
 
-go 1.23.1
+go 1.23.2
 
 require (
 	github.com/google/go-github/v66 v66.0.0
