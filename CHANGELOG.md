@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Go: Upgrade to v1.23.2.
 - Main: Implement pagination.
+- Main: Report triggers with unknown arguments.
 
 ## [0.9.0] - 2024-09-16
 
