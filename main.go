@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -304,10 +305,37 @@ func main() {
 			},
 		}
 
+		// Define unknown arguments.
+		unknownArgs := []string{}
+
 		// Copy Args over to `env` object for populating params
 		for key, val := range trigger.Args {
-			env[key] = val
+			// Check if pipeline parameter names contain argument key.
+			if slices.ContainsFunc([]tkn.ParamSpec(pipeline.Spec.Params), func(param tkn.ParamSpec) bool { return param.Name == key }) {
+				// Set environment variable.
+				env[key] = val
+			} else {
+				// Add argument key to unknown arguments.
+				unknownArgs = append(unknownArgs, key)
+			}
 		}
+
+		if len(unknownArgs) > 0 {
+			// Compose comment.
+			comment := &github.IssueComment{
+				Body: github.String(":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`"),
+			}
+
+			// Report unknown arguments.
+			_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, comment)
+			if err != nil {
+				fmt.Println("Failed to add PR comment", err)
+			}
+
+			// Skip pipeline execution.
+			continue
+		}
+
 		// If positional args are provided, add them as a `POS_ARGS` env var with a comma seperated value
 		if len(trigger.PosArgs) > 0 {
 			env["POS_ARGS"] = strings.Join(trigger.PosArgs, ",")
@@ -401,6 +429,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 		if pipeline != nil {
 			return pipeline, userProvidedNamespace, nil
 		} else if errors.IsNotFound(err) {
+			//lint:ignore ST1005 Pipeline is a CRD's name here.
 			return nil, "", fmt.Errorf("Pipeline not found in user provided namespace")
 		}
 	}
@@ -416,11 +445,12 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 			continue
 		} else if err == nil {
 			return pipeline, namespace, nil
-		} else if err != nil {
+		} else {
 			return nil, "", err
 		}
 	}
 
+	//lint:ignore ST1005 Pipeline is a CRD's name here.
 	return nil, "", fmt.Errorf("Pipeline with name '%s' not found", pipelineName)
 }
 
