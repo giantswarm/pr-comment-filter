@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/google/go-github/v69 v69.2.0
 	github.com/tektoncd/pipeline v0.68.0
-	golang.org/x/oauth2 v0.27.0
+	golang.org/x/oauth2 v0.28.0
 	k8s.io/api v0.32.2
 	k8s.io/apimachinery v0.32.2
 	k8s.io/client-go v0.32.2
