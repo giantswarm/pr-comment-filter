@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/google/go-github/v70 v70.0.0
-	github.com/tektoncd/pipeline v0.69.1
+	github.com/tektoncd/pipeline v0.70.0
 	golang.org/x/oauth2 v0.28.0
 	k8s.io/api v0.32.3
 	k8s.io/apimachinery v0.32.3
@@ -33,7 +33,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/cel-go v0.23.2 // indirect
+	github.com/google/cel-go v0.24.1 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
