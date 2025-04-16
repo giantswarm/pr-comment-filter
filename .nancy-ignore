@@ -1,3 +1,7 @@
 # pkg:golang/github.com/tektoncd/pipeline@v0.65.0
 # [CVE-2023-37264] CWE-345: Insufficient Verification of Data Authenticity
 CVE-2023-37264
+
+# pkg:golang/golang.org/x/net@v0.34.0
+CVE-2025-22870
+CVE-2025-22872
