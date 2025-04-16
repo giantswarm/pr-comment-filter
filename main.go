@@ -193,7 +193,7 @@ func main() {
 		fmt.Println("PR is draft and was triggered from the opening comment, not triggering")
 
 		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.IssueComment{
-			Body: github.String("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
+			Body: github.Ptr("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
 		})
 		if err != nil {
 			fmt.Println("Failed to add PR comment", err)
@@ -210,7 +210,7 @@ func main() {
 			fmt.Printf("Failed to find pipeline '%s', skipping\n", trigger.PipelineName)
 			continue
 		}
-		fmt.Printf("Found Pipeline '%s' in namespace '%s'\n", pipeline.ObjectMeta.Name, namespace)
+		fmt.Printf("Found Pipeline '%s' in namespace '%s'\n", pipeline.Name, namespace)
 
 		// Check if we can find an appropriately named ServiceAccount or fallback to using `default`
 		serviceAccountName := trigger.PipelineName
@@ -219,18 +219,18 @@ func main() {
 			fmt.Printf("Failed to find ServiceAccount, skipping\n")
 			continue
 		}
-		serviceAccountName = serviceAccount.ObjectMeta.Name
+		serviceAccountName = serviceAccount.Name
 		fmt.Printf("Using ServiceAccount '%s' in namespace '%s'\n", serviceAccountName, namespace)
 
 		// Support defining a pipeline timeout as an annotation on the Pipeline resource
-		pipelineTimeout, err := time.ParseDuration(getAnnotationOrDefault(pipeline.ObjectMeta.Annotations, "tekton.dev/pipeline-timeout", "1h"))
+		pipelineTimeout, err := time.ParseDuration(getAnnotationOrDefault(pipeline.Annotations, "tekton.dev/pipeline-timeout", "1h"))
 		if err != nil {
 			pipelineTimeout, _ = time.ParseDuration("1h")
 		}
 		fmt.Printf("Setting Pipeline timeout to: %v\n", pipelineTimeout)
 
 		// Support defining the storage class for the pipeline workspace
-		workspaceStorageClass := getAnnotationOrDefault(pipeline.ObjectMeta.Annotations, "cicd.giantswarm.io/storage-class", "efs-sc")
+		workspaceStorageClass := getAnnotationOrDefault(pipeline.Annotations, "cicd.giantswarm.io/storage-class", "efs-sc")
 		workspaceStorageClassAccessMode := corev1.ReadWriteOnce
 		if workspaceStorageClass == "efs-sc" {
 			workspaceStorageClassAccessMode = corev1.ReadWriteMany
@@ -323,7 +323,7 @@ func main() {
 		if len(unknownArgs) > 0 {
 			// Compose comment.
 			comment := &github.IssueComment{
-				Body: github.String(":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`"),
+				Body: github.Ptr(":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`"),
 			}
 
 			// Report unknown arguments.
@@ -430,7 +430,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 			return pipeline, userProvidedNamespace, nil
 		} else if errors.IsNotFound(err) {
 			//lint:ignore ST1005 Pipeline is a CRD's name here.
-			return nil, "", fmt.Errorf("Pipeline not found in user provided namespace")
+			return nil, "", fmt.Errorf("pipeline not found in user provided namespace")
 		}
 	}
 
@@ -451,7 +451,7 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 	}
 
 	//lint:ignore ST1005 Pipeline is a CRD's name here.
-	return nil, "", fmt.Errorf("Pipeline with name '%s' not found", pipelineName)
+	return nil, "", fmt.Errorf("pipeline with name '%s' not found", pipelineName)
 }
 
 func getServiceAccount(ctx context.Context, serviceAccountName string, namespace string) (*corev1.ServiceAccount, error) {
