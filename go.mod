@@ -3,7 +3,7 @@ module pr-comment-filter
 go 1.24.2
 
 require (
-	github.com/google/go-github/v76 v76.0.0
+	github.com/google/go-github/v77 v77.0.0
 	github.com/tektoncd/pipeline v1.6.0
 	golang.org/x/oauth2 v0.32.0
 	k8s.io/api v0.34.1
