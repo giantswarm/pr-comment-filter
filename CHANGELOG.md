@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support `NAMESPACE` parameter for cross-namespace pipeline routing.
+- Add pipeline-specific fallback namespaces (`generate-mc` falls back to `mc-bootstrap`).
+
 ### Fixed
 
 - Fix linting issues.
