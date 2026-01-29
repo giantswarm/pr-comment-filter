@@ -46,6 +46,11 @@ var (
 	kubeClient   kubernetes.Interface
 
 	renovateBotUserID string
+
+	// Pipeline-specific fallback namespaces for pipelines that live in non-standard namespaces
+	pipelineFallbackNamespaces = map[string]string{
+		"generate-mc": "mc-bootstrap",
+	}
 )
 
 type ChangedFiles struct {
@@ -310,6 +315,10 @@ func main() {
 
 		// Copy Args over to `env` object for populating params
 		for key, val := range trigger.Args {
+			// Skip NAMESPACE as it's handled separately for pipeline routing
+			if key == "NAMESPACE" {
+				continue
+			}
 			// Check if pipeline parameter names contain argument key.
 			if slices.ContainsFunc([]tkn.ParamSpec(pipeline.Spec.Params), func(param tkn.ParamSpec) bool { return param.Name == key }) {
 				// Set environment variable.
@@ -434,8 +443,14 @@ func getPipeline(ctx context.Context, pipelineName string, userProvidedNamespace
 		}
 	}
 
-	// Check if a pipeline exists in a namespace matching the repo, if not finally check the default namespace
-	for _, namespace := range []string{repoNamespace, defaultNamespace} {
+	// Build list of namespaces to search: repo namespace, default namespace, and pipeline-specific fallback
+	namespacesToSearch := []string{repoNamespace, defaultNamespace}
+	if fallbackNs, ok := pipelineFallbackNamespaces[pipelineName]; ok {
+		namespacesToSearch = append(namespacesToSearch, fallbackNs)
+	}
+
+	// Check if a pipeline exists in namespaces in order
+	for _, namespace := range namespacesToSearch {
 		if namespace == "" {
 			continue
 		}
