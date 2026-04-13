@@ -1,3 +1,4 @@
 CVE-2023-37264 until=2026-05-02 # github.com/tektoncd/pipeline@v1.10.2
 CVE-2026-33186 until=2026-04-19 # google.golang.org/grpc@v1.79.1
 CVE-2026-27141 until=2026-05-02 # golang.org/x/net@v0.50.0
+CVE-2026-39883 until=2026-05-10 # go.opentelemetry.io/otel/sdk@v1.42.0
