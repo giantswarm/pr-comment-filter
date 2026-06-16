@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/google/go-github/v88 v88.0.0
-	github.com/tektoncd/pipeline v1.13.0
+	github.com/tektoncd/pipeline v1.13.1
 	golang.org/x/oauth2 v0.36.0
 	k8s.io/api v0.36.2
 	k8s.io/apimachinery v0.36.2
