@@ -5,3 +5,4 @@ CVE-2026-42506 until=2026-07-29 # golang.org/x/net@v0.54.0
 CVE-2026-25681 until=2026-07-29 # golang.org/x/net@v0.54.0
 CVE-2026-25680 until=2026-07-29 # golang.org/x/net@v0.54.0
 CVE-2026-39821 until=2026-07-29 # golang.org/x/net@v0.54.0
+CVE-2026-56852 until=2026-08-27 # golang.org/x/text@v0.38.0
