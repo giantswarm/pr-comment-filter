@@ -1,3 +1,3 @@
-CVE-2023-37264 until=2026-08-02 # github.com/tektoncd/pipeline@v1.14.0
+CVE-2023-37264 until=2026-09-02 # github.com/tektoncd/pipeline@v1.15.0
 CVE-2026-56852 until=2026-08-27 # golang.org/x/text@v0.38.0
 CVE-2026-63209 until=2026-08-28 # github.com/klauspost/compress@v1.18.6
