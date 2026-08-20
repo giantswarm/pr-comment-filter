@@ -6,9 +6,9 @@ require (
 	github.com/google/go-github/v90 v90.0.0
 	github.com/tektoncd/pipeline v1.15.0
 	golang.org/x/oauth2 v0.36.0
-	k8s.io/api v0.36.3
-	k8s.io/apimachinery v0.36.3
-	k8s.io/client-go v0.36.3
+	k8s.io/api v0.36.4
+	k8s.io/apimachinery v0.36.4
+	k8s.io/client-go v0.36.4
 )
 
 require (
