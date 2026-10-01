@@ -1,5 +1,6 @@
 CVE-2023-37264 until=2026-10-02 # github.com/tektoncd/pipeline@v1.16.0
-CVE-2026-56854 until=2026-09-30 # golang.org/x/crypto@v0.54.0
 CVE-2026-56864 until=2026-10-01 # golang.org/x/mod@v0.38.0
 CVE-2026-56865 until=2026-10-01 # golang.org/x/mod@v0.38.0
 CVE-2026-81870 until=2026-10-03 # go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp@v1.44.0
+CVE-2026-56855 until=2026-10-30 # golang.org/x/crypto@v0.55.0
+CVE-2026-78662 until=2026-10-30 # golang.org/x/crypto@v0.55.0
