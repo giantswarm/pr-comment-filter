@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Allow the `giantswarm-release` GitHub App bot (user ID `342014845`) to trigger pipelines, replacing the `taylorbot` user. Configurable with the new `ALLOWED_BOT_USER_IDS` environment variable.
+
 ## [0.11.0] - 2026-01-29
 
 ### Added

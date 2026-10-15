@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"pr-comment-filter/internal/allowedbots"
+
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/pod"
 	tkn "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
@@ -45,7 +47,7 @@ var (
 	tektonClient *tknclient.Clientset
 	kubeClient   kubernetes.Interface
 
-	renovateBotUserID string
+	allowedBots allowedbots.Allowlist
 
 	// Pipeline-specific fallback namespaces for pipelines that live in non-standard namespaces
 	pipelineFallbackNamespaces = map[string]string{
@@ -80,10 +82,7 @@ func init() {
 		os.Exit(0)
 	}
 
-	renovateBotUserID = os.Getenv("RENOVATE_BOT_USER_ID")
-	if renovateBotUserID == "" {
-		renovateBotUserID = "29139614"
-	}
+	allowedBots = allowedbots.New(os.Getenv("RENOVATE_BOT_USER_ID"), os.Getenv("ALLOWED_BOT_USER_IDS"))
 
 	env = map[string]string{
 		"URL":              os.Getenv("URL"),
@@ -494,8 +493,8 @@ func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool
 		}
 
 		return *membership.State == "active"
-	} else if strings.ToLower(userType) == "bot" && userID == renovateBotUserID {
-		fmt.Println("Allowing Renovate bot to trigger pipeline")
+	} else if allowedBots.AllowsBot(userType, userID) {
+		fmt.Printf("Allowing bot %s (ID %s) to trigger pipeline\n", userLogin, userID)
 		return true
 	}
 
