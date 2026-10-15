@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"pr-comment-filter/internal/allowedbots"
+	"pr-comment-filter/internal/ghclient"
 
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/pod"
 	tkn "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
@@ -138,18 +139,19 @@ func main() {
 
 	ctx := context.Background()
 
-	if !isUserAllowed(ctx, env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"]) {
+	ghClient, err := ghclient.New(os.Getenv("GITHUB_TOKEN"))
+	if err != nil {
+		fmt.Println("Failed to create GitHub client: ", err)
+		os.Exit(1)
+	}
+
+	if !isUserAllowed(ctx, ghClient, env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"]) {
 		fmt.Printf("User not permitted to trigger pipelines. User: %s, ID: %s, Type: %s\n", env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"])
 		return
 	}
 
 	triggerMatches := triggerFormat.FindAllStringSubmatch(os.Getenv("COMMENT"), -1)
 
-	ghClient, err := github.NewClient(github.WithAuthToken(os.Getenv("GITHUB_TOKEN")))
-	if err != nil {
-		fmt.Println("Failed to create GitHub client: ", err)
-		os.Exit(1)
-	}
 	prNumber, err := strconv.Atoi(env["NUMBER"])
 	if err != nil {
 		panic("Failed to parse PR number to int")
@@ -479,14 +481,8 @@ func getServiceAccount(ctx context.Context, serviceAccountName string, namespace
 	return serviceAccount, err
 }
 
-func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool {
+func isUserAllowed(ctx context.Context, ghClient *github.Client, userLogin, userID, userType string) bool {
 	if strings.ToLower(userType) == "user" && userLogin != "" {
-		ghClient, err := github.NewClient(github.WithAuthToken(os.Getenv("GITHUB_TOKEN")))
-		if err != nil {
-			fmt.Println("Failed to create GitHub client: ", err)
-			os.Exit(1)
-		}
-
 		membership, _, err := ghClient.Organizations.GetOrgMembership(ctx, userLogin, ORG_NAME)
 		if err != nil {
 			fmt.Println("Failed to get org membership from GitHub: ", err)
