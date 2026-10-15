@@ -19,7 +19,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/google/go-github/v92/github"
-	"golang.org/x/oauth2"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/client-go/kubernetes"
@@ -146,10 +145,11 @@ func main() {
 
 	triggerMatches := triggerFormat.FindAllStringSubmatch(os.Getenv("COMMENT"), -1)
 
-	oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	))
-	ghClient := github.NewClient(oClient)
+	ghClient, err := github.NewClient(github.WithAuthToken(os.Getenv("GITHUB_TOKEN")))
+	if err != nil {
+		fmt.Println("Failed to create GitHub client: ", err)
+		os.Exit(1)
+	}
 	prNumber, err := strconv.Atoi(env["NUMBER"])
 	if err != nil {
 		panic("Failed to parse PR number to int")
@@ -196,8 +196,8 @@ func main() {
 	if *pr.Draft && env["COMMENT_ID"] == "" {
 		fmt.Println("PR is draft and was triggered from the opening comment, not triggering")
 
-		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.IssueComment{
-			Body: github.Ptr("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
+		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, github.IssueCommentRequest{
+			Body: "> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment.",
 		})
 		if err != nil {
 			fmt.Println("Failed to add PR comment", err)
@@ -330,8 +330,8 @@ func main() {
 
 		if len(unknownArgs) > 0 {
 			// Compose comment.
-			comment := &github.IssueComment{
-				Body: github.Ptr(":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`"),
+			comment := github.IssueCommentRequest{
+				Body: ":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`",
 			}
 
 			// Report unknown arguments.
@@ -481,10 +481,11 @@ func getServiceAccount(ctx context.Context, serviceAccountName string, namespace
 
 func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool {
 	if strings.ToLower(userType) == "user" && userLogin != "" {
-		oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-		))
-		ghClient := github.NewClient(oClient)
+		ghClient, err := github.NewClient(github.WithAuthToken(os.Getenv("GITHUB_TOKEN")))
+		if err != nil {
+			fmt.Println("Failed to create GitHub client: ", err)
+			os.Exit(1)
+		}
 
 		membership, _, err := ghClient.Organizations.GetOrgMembership(ctx, userLogin, ORG_NAME)
 		if err != nil {
