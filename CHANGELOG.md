@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Adapt to the go-github v92 API (`NewClient` options, `IssueCommentRequest`) so the module builds again.
+- Adapt to the go-github v92/v93 API (`NewClient` options, `IssueCommentRequest`) so the module builds again.
+- Bump `golang.org/x/net` to v0.60.0 and the OpenTelemetry OTLP gRPC and HTTP exporters to v1.45.0 for GO-2026-6505, GO-2026-6603, GO-2026-6610, GO-2026-6611, GO-2026-6612 and GO-2026-6617. GO-2023-1901 in `tektoncd/pipeline` has no fix and is excluded in `.govulncheck-ignore`.
 
 ## [0.11.0] - 2026-01-29
 
