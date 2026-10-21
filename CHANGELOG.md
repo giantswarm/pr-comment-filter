@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-21
+
 ### Added
 
 - Allow the `giantswarm-release` GitHub App bot (user ID `342014845`) to trigger pipelines by user ID. Configurable with the new `ALLOWED_BOT_USER_IDS` environment variable.
@@ -100,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2023-10-18
 
 
-[Unreleased]: https://github.com/giantswarm/pr-comment-filter/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/giantswarm/pr-comment-filter/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/giantswarm/pr-comment-filter/compare/v0.8.1...v0.9.0
