@@ -41,3 +41,19 @@ Some notes:
 * Argument values with spaces in them is not currently supported
 * A Pipeline from a specific namespace can be run by specifying a `NAMESPACE=xxx` argument along with the `/run` trigger line
 * If a user provided namespace isn't provided the pipeline will first be looked for in a namespace matching the repo name and if not found then default back to the `tekton-pipelines` namespace.
+
+## Who can trigger pipelines
+
+Comments are only acted on when they come from one of:
+
+* an active member of the `giantswarm` GitHub organization (account type `User`), or
+* an allowed bot (account type `Bot`), matched on its numeric user ID, never on its login.
+
+The allowed bots are configured with environment variables:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `RENOVATE_BOT_USER_ID` | `29139614` | User ID of the Renovate bot. Kept for backwards compatibility. |
+| `ALLOWED_BOT_USER_IDS` | `342014845` | Comma-separated user IDs of further allowed bots. The default is the `giantswarm-release` GitHub App (`giantswarm-release[bot]`). |
+
+Both variables are combined. Setting `ALLOWED_BOT_USER_IDS` replaces its default, so include `342014845` if the `giantswarm-release` bot should stay allowed. Other bots, such as `github-actions[bot]` (ID `41898282`), are rejected.

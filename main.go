@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"pr-comment-filter/internal/allowedbots"
+	"pr-comment-filter/internal/ghclient"
+
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/pod"
 	tkn "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tknclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
@@ -17,7 +20,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/google/go-github/v93/github"
-	"golang.org/x/oauth2"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/client-go/kubernetes"
@@ -45,7 +47,7 @@ var (
 	tektonClient *tknclient.Clientset
 	kubeClient   kubernetes.Interface
 
-	renovateBotUserID string
+	allowedBots allowedbots.Allowlist
 
 	// Pipeline-specific fallback namespaces for pipelines that live in non-standard namespaces
 	pipelineFallbackNamespaces = map[string]string{
@@ -80,10 +82,7 @@ func init() {
 		os.Exit(0)
 	}
 
-	renovateBotUserID = os.Getenv("RENOVATE_BOT_USER_ID")
-	if renovateBotUserID == "" {
-		renovateBotUserID = "29139614"
-	}
+	allowedBots = allowedbots.New(os.Getenv("RENOVATE_BOT_USER_ID"), os.Getenv("ALLOWED_BOT_USER_IDS"))
 
 	env = map[string]string{
 		"URL":              os.Getenv("URL"),
@@ -140,17 +139,19 @@ func main() {
 
 	ctx := context.Background()
 
-	if !isUserAllowed(ctx, env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"]) {
+	ghClient, err := ghclient.New(os.Getenv("GITHUB_TOKEN"))
+	if err != nil {
+		fmt.Println("Failed to create GitHub client: ", err)
+		os.Exit(1)
+	}
+
+	if !isUserAllowed(ctx, ghClient, env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"]) {
 		fmt.Printf("User not permitted to trigger pipelines. User: %s, ID: %s, Type: %s\n", env["USER_LOGIN"], env["USER_ID"], env["USER_TYPE"])
 		return
 	}
 
 	triggerMatches := triggerFormat.FindAllStringSubmatch(os.Getenv("COMMENT"), -1)
 
-	oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	))
-	ghClient := github.NewClient(oClient)
 	prNumber, err := strconv.Atoi(env["NUMBER"])
 	if err != nil {
 		panic("Failed to parse PR number to int")
@@ -197,8 +198,8 @@ func main() {
 	if *pr.Draft && env["COMMENT_ID"] == "" {
 		fmt.Println("PR is draft and was triggered from the opening comment, not triggering")
 
-		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, &github.IssueComment{
-			Body: github.Ptr("> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment."),
+		_, _, err = ghClient.Issues.CreateComment(ctx, env["REPO_ORG"], env["REPO_NAME"], prNumber, github.IssueCommentRequest{
+			Body: "> [!NOTE]\n> As this is a draft PR no triggers from the PR body will be handled.\n> \n> If you'd like to trigger them while draft please add them as a PR comment.",
 		})
 		if err != nil {
 			fmt.Println("Failed to add PR comment", err)
@@ -331,8 +332,8 @@ func main() {
 
 		if len(unknownArgs) > 0 {
 			// Compose comment.
-			comment := &github.IssueComment{
-				Body: github.Ptr(":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`"),
+			comment := github.IssueCommentRequest{
+				Body: ":warning: Trigger `" + strings.TrimSpace(trigger.FullTrigger) + "` contains unknown arguments:\n- `" + strings.Join(unknownArgs, "`\n- `") + "`",
 			}
 
 			// Report unknown arguments.
@@ -480,13 +481,8 @@ func getServiceAccount(ctx context.Context, serviceAccountName string, namespace
 	return serviceAccount, err
 }
 
-func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool {
+func isUserAllowed(ctx context.Context, ghClient *github.Client, userLogin, userID, userType string) bool {
 	if strings.ToLower(userType) == "user" && userLogin != "" {
-		oClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-		))
-		ghClient := github.NewClient(oClient)
-
 		membership, _, err := ghClient.Organizations.GetOrgMembership(ctx, userLogin, ORG_NAME)
 		if err != nil {
 			fmt.Println("Failed to get org membership from GitHub: ", err)
@@ -494,8 +490,8 @@ func isUserAllowed(ctx context.Context, userLogin, userID, userType string) bool
 		}
 
 		return *membership.State == "active"
-	} else if strings.ToLower(userType) == "bot" && userID == renovateBotUserID {
-		fmt.Println("Allowing Renovate bot to trigger pipeline")
+	} else if allowedBots.AllowsBot(userType, userID) {
+		fmt.Printf("Allowing bot %s (ID %s) to trigger pipeline\n", userLogin, userID)
 		return true
 	}
 
