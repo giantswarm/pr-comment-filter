@@ -7,7 +7,7 @@ require (
 	github.com/tektoncd/pipeline v1.18.0
 	k8s.io/api v0.37.2
 	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
+	k8s.io/client-go v1.5.2
 )
 
 require (
